@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en" style="font-size: 75%;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merky's Forum</title>
+    <style>
+        body {
+            background-color: #000000; /* Black background */
+            color: #ffffff; /* White text */
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 1.5em; /* 75% font size */
+        }
+        .header {
+            background-color: #6a5acd; /* Lavender header background */
+            color: #ffd700; /* Gold text */
+            padding: 20px;
+            text-align: center;
+            font-size: 24px;
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .menu-icon {
+            display: none;
+        }
+        .menu {
+            display: flex;
+            flex-direction: column;
+            background-color: #6a5acd; /* Lavender menu background */
+            width: 200px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            font-size: 1.5em; /* 75% font size */
+        }
+        .menu button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            background: none;
+            color: #ffffff; /* White text */
+            text-align: left;
+            cursor: pointer;
+        }
+        .menu button:hover {
+            background-color: #800080; /* Darker purple on hover */
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            flex: 1;
+            overflow-y: auto;
+        }
+        .scroll-box {
+            background-color: #000000; /* Black scroll box background */
+            color: #ffffff; /* White text */
+            padding: 10px;
+            height: 300px; /* Adjust height as needed */
+            overflow-y: auto;
+            border-radius: 5px;
+            border: 1px solid #cccccc; /* Light gray border */
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Merky's Forum</h1>
+        <p>Collab with <a href="https://discord.gg/8jrJbGzM72" target="_blank">crp3</a></p>
+    </div>
+    <div class="menu" id="menu">
+        <button onclick="loadPage('JoinDiscord.html')">Join Our Discord</button>
+        <button onclick="loadPage('Posts.html')">Posts</button>
+        <button onclick="showInstructions()">How to enter Merky's Hub?</button>
+    </div>
+    <div class="container" id="content-container">
+        <!-- Dynamic content will be loaded here -->
+    </div>
+    <div class="container input-container">
+        <input type="text" id="message-input" class="input-box" placeholder="Your Message...">
+        <button onclick="sendMessage()" class="send-button">&#x2191;</button> <!-- Upward arrow character -->
+    </div>
+
+    <script>
+        let userId = localStorage.getItem('userId');
+        if (!userId) {
+            userId = Math.floor(Math.random() * 1000);
+            localStorage.setItem('userId', userId);
+        }
+
+        window.onload = function() {
+            const messages = JSON.parse(localStorage.getItem('messages')) || [];
+            const messageContainer = document.getElementById('message-container');
+            messages.forEach(msg => {
+                const formattedMessage = '<div class="message-box"><strong style="color: #ffd700;">' + msg.username + ':</strong> ' + msg.message + '</div>';
+                messageContainer.innerHTML += formattedMessage;
+            });
+        }
+
+        function sendMessage() {
+            const messageInput = document.getElementById('message-input');
+            const message = messageInput.value.trim();
+            if (message !== '') {
+                const username = 'Anonymous(' + userId + ')';
+                const formattedMessage = '<div class="message-box"><strong style="color: #ffd700;">' + username + ':</strong> ' + message + '</div>';
+                document.getElementById('message-container').innerHTML += formattedMessage;
+                saveMessageToFile(username, message);
+                messageInput.value = '';
+            }
+        }
+
+        function saveMessageToFile(username, message) {
+            const messages = JSON.parse(localStorage.getItem('messages')) || [];
+            messages.push({ username, message });
+            localStorage.setItem('messages', JSON.stringify(messages));
+        }
+
+        function showInstructions() {
+            alert('First, click "Advanced" on your browser. After that, click "trust this page" or "proceed".');
+        }
+
+        function loadPage(page) {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', page, true);
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    document.getElementById('content-container').innerHTML = xhr.responseText;
+                }
+            };
+            xhr.send();
+        }
+    </script>
+</body>
+</html>
